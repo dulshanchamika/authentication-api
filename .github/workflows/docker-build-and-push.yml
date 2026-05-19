@@ -19,12 +19,17 @@ jobs:
     name: Build and Push Docker Image (${{ matrix.project }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         project: [backend, frontend]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -67,7 +72,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             NODE_ENV=production
-            BUILD_DATE={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
+            BUILD_DATE=${{ steps.date.outputs.date }}
             GIT_SHA=${{ github.sha }}
 
       - name: Generate build summary

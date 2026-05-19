@@ -1,5 +1,5 @@
 # Base image
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY . .
 # but this stage ensures we have all source files.
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -36,8 +36,8 @@ COPY --from=build /app/drizzle ./drizzle
 COPY --from=build /app/drizzle.config.js ./
 
 # Create a non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nodejs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nodejs
 USER nodejs
 
 EXPOSE 3000
