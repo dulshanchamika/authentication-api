@@ -38,7 +38,6 @@ lerna-debug.log*
 coverage/
 backend/coverage/
 *.lcov
-*.html
 
 # System & Editor files
 .vscode/*
