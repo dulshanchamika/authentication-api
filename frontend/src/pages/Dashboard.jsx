@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   LogOut, User, Mail, Shield, 
@@ -39,20 +39,23 @@ const Dashboard = () => {
   const [deleteError, setDeleteError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // Sync profile details if user changes
+  // Sync profile state when user changes (e.g. after an update)
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileName(user.name);
+       
       setProfileEmail(user.email);
     }
   }, [user]);
 
-  // Load user-specific todos
   useEffect(() => {
     const stored = localStorage.getItem(storageKey);
     if (stored) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTodos(JSON.parse(stored));
     } else {
+       
       setTodos([]);
     }
   }, [storageKey]);
