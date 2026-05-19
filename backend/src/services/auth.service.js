@@ -91,7 +91,8 @@ export const authenticateUser = async ({ email, password }) => {
   } catch (e) {
     logger.error('Error authenticating user', { error: e });
     // Re-throw known user-facing errors so the controller can handle them correctly
-    if (e.message === 'User not found' || e.message === 'Invalid password') throw e;
+    if (e.message === 'User not found' || e.message === 'Invalid password')
+      throw e;
     throw new Error('Error authenticating user', { cause: e });
   }
 };

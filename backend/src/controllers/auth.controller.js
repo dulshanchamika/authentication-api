@@ -113,13 +113,13 @@ export const getMe = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
-    
+
     res.status(200).json({
       user: {
         id: user.id,
         email: user.email,
         role: user.role,
-      }
+      },
     });
   } catch (e) {
     logger.error('Get me error', e);

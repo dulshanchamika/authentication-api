@@ -19,10 +19,6 @@ router.get('/:id', authenticateToken, fetchUserById);
 router.put('/:id', authenticateToken, updateUserById);
 
 // DELETE /users/:id - Delete user by ID (admin or self-deletion)
-router.delete(
-  '/:id',
-  authenticateToken,
-  deleteUserById
-);
+router.delete('/:id', authenticateToken, deleteUserById);
 
 export default router;

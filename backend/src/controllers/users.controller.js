@@ -175,7 +175,8 @@ export const deleteUserById = async (req, res, next) => {
     if (req.user.role === 'admin' && req.user.id === id) {
       return res.status(403).json({
         error: 'Operation denied',
-        message: 'Administrators cannot delete their own account to prevent lockouts',
+        message:
+          'Administrators cannot delete their own account to prevent lockouts',
       });
     }
 
