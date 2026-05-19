@@ -1,0 +1,65 @@
+services:
+  # 1. Neon Local Database Proxy
+  db-proxy:
+    image: neondatabase/neon_local:latest
+    container_name: auth-db-proxy
+    ports:
+      - '5432:5432'
+    env_file:
+      - ./.env
+    volumes:
+      - ./backend/.neon_local/:/tmp/.neon_local
+    networks:
+      - app-network
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'localhost', '-p', '5432', '-U', 'neon']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # 2. Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: auth-backend
+    ports:
+      - '${BACKEND_PORT:-3000}:3000'
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_URL=postgres://neon:npg@db-proxy:5432/neondb?sslmode=disable
+    volumes:
+      - ./backend/src:/app/src:ro
+    networks:
+      - app-network
+    depends_on:
+      db-proxy:
+        condition: service_healthy
+
+  # 3. Frontend App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: auth-frontend
+    ports:
+      - '${FRONTEND_PORT:-5173}:5173'
+    env_file:
+      - ./.env
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3000/api}
+      - VITE_API_PROXY=http://backend:3000
+    volumes:
+      - ./frontend/src:/app/src:ro
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    driver: bridge

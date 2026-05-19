@@ -1,0 +1,61 @@
+name: Lint and Format Check
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  lint-and-format:
+    name: Lint and Format Check (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [backend, frontend]
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: './${{ matrix.project }}/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        id: eslint
+        run: |
+          echo "::notice::Running ESLint check for ${{ matrix.project }}..."
+          if ! npm run lint; then
+            echo "::error::ESLint found issues in ${{ matrix.project }} code"
+            exit 1
+          fi
+
+      - name: Run Prettier check
+        if: matrix.project == 'backend'
+        id: prettier
+        run: |
+          echo "::notice::Running Prettier format check for backend..."
+          if ! npm run format:check; then
+            echo "::error::Code formatting issues found in backend"
+            exit 1
+          fi
+
+      - name: Success notification
+        if: success()
+        run: |
+          echo "::notice::All linting checks passed for ${{ matrix.project }}! ✅"

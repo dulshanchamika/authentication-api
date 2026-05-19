@@ -1,0 +1,8 @@
+node_modules
+.env.*
+.env
+logs/
+*.log.neon_local/
+coverage/
+*.lcov
+*.html
