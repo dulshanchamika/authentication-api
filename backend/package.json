@@ -16,7 +16,6 @@
     "#validations/*": "./src/validations/*"
   },
   "scripts": {
-    "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

@@ -1,7 +1,1 @@
-import app from './app.js';
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
-});
+// This file is deprecated. Server startup logic has been moved to index.js.

@@ -11,7 +11,7 @@ RUN npm ci --include=dev
 FROM base AS development
 COPY . .
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
 
 # Build stage (preparing for production)
 FROM base AS build

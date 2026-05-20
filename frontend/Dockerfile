@@ -21,5 +21,12 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine AS production
 COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+# Default backend URL (matches docker-compose backend service)
+ENV BACKEND_URL=http://backend:3000
+# Only substitute BACKEND_URL to prevent breaking native Nginx variables
+ENV NGINX_ENVSUBST_FILTER="BACKEND_URL"
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
